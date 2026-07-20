@@ -1,9 +1,9 @@
 name: Sync Fork
 
 on:
+  workflow_dispatch:
   schedule:
     - cron: "0 0 * * *"
-  workflow_dispatch:
 
 permissions:
   contents: write
@@ -11,23 +11,25 @@ permissions:
 jobs:
   sync:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+          ref: main
 
-      - name: Set up Git
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "ibin@qq.com"
+      - run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
 
-      - name: Add upstream remote
-        run: git remote add upstream https://github.com/ACL4SSR/ACL4SSR.git
+      - run: |
+          git remote add upstream https://github.com/ACL4SSR/ACL4SSR.git
 
-      - name: Fetch upstream
-        run: git fetch upstream
+      - run: |
+          git fetch upstream master
 
-      - name: Merge upstream changes
-        run: git merge upstream/main --allow-unrelated-histories || true
+      - run: |
+          git merge upstream/master --no-edit
 
-      - run: git push
+      - run: |
+          git push origin main
