@@ -5,6 +5,10 @@ on:
   schedule:
     - cron: "0 0 * * *"
 
+concurrency:
+  group: sync-fork
+  cancel-in-progress: true
+
 permissions:
   contents: write
 
@@ -13,23 +17,45 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
           ref: master
 
-      - run: |
-          git config user.name github-actions
-          git config user.email github-actions@github.com
+      - name: Git config
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-      - run: |
+      - name: Setup upstream
+        run: |
+          git remote remove upstream || true
           git remote add upstream https://github.com/ACL4SSR/ACL4SSR.git
 
-      - run: |
+      - name: Fetch upstream
+        run: |
           git fetch upstream master
 
-      - run: |
-          git merge upstream/master --no-edit
+      - name: Merge upstream
+        run: |
+          git merge upstream/master --no-edit || true
 
-      - run: |
+      - name: Keep local workflows
+        run: |
+          git restore --source=HEAD --staged --worktree .github/workflows || true
+
+      - name: Commit
+        run: |
+          git add -A
+
+          if git diff --cached --quiet; then
+            echo "Nothing changed"
+            exit 0
+          fi
+
+          git commit -m "chore: sync ACL4SSR upstream"
+
+      - name: Push
+        run: |
           git push origin master
