@@ -1,13 +1,5 @@
 # 内容：GFWList 黑名单
-<<<<<<< HEAD
-# 数量：4416条
-DOMAIN-SUFFIX,*.pimg.tw
-DOMAIN-SUFFIX,*.sf.net
-DOMAIN-SUFFIX,*.tuzaijidi.com
-DOMAIN-SUFFIX,*.wordpress.com
-=======
 # 数量：4415条
->>>>>>> upstream/master
 DOMAIN-SUFFIX,*2.bahamut.com.tw
 DOMAIN-SUFFIX,000webhost.com
 DOMAIN-SUFFIX,0rz.tw
